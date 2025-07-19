@@ -4,7 +4,17 @@ import (
 	"net/http"
 	"time"
 )
-
+// handleRefresh godoc
+// @Summary      Refresh Access Token
+// @Description  Generates a new access JWT given a valid refresh token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        Authorization header string true "Bearer refresh token"
+// @Success      200  {object}  map[string]string "New access token"
+// @Failure      401  {object}  ErrorResponse "Missing, invalid or expired refresh token"
+// @Failure      500  {object}  ErrorResponse "Failed to create access token"
+// @Router       /api/refresh [post]
 func (cfg *apiConfig) handleRefresh(w http.ResponseWriter, r *http.Request) {
 	refreshtoken, err := auth.GetBearerToken(r.Header)
 	if err != nil {

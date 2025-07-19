@@ -5,7 +5,21 @@ import (
 	"github.com/odilmode/http/internal/auth"
 	"github.com/google/uuid"
 )
-
+// handleDeleteChirp deletes a chirp by its ID if the requester is the author.
+// @Summary Delete a chirp
+// @Description Delete a chirp if the authenticated user is the author
+// @Tags Chirps
+// @Accept json
+// @Produce json
+// @Param chirpID path string true "Chirp ID"
+// @Param Authorization header string true "Bearer JWT token"
+// @Success 204 "No Content"
+// @Failure 400 {object} map[string]string "Invalid chirp ID"
+// @Failure 401 {object} map[string]string "Unauthorized or missing token"
+// @Failure 403 {object} map[string]string "Forbidden: not the author"
+// @Failure 404 {object} map[string]string "Chirp not found"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/chirps/{chirpID} [delete]
 func (cfg *apiConfig) handleDeleteChirp(w http.ResponseWriter, r *http.Request) {
 	accessToken, err := auth.GetBearerToken(r.Header)
 	if err != nil {

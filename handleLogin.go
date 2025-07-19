@@ -7,20 +7,34 @@ import (
 	"github.com/odilmode/http/internal/database"
 	"github.com/odilmode/http/internal/auth"
 )
+// LoginRequest represents the login credentials
+// swagger:model LoginRequest
+type LoginRequest struct {
+    Password string `json:"password"`
+    Email    string `json:"email"`
+}
+// response represents response by server
+// swagger: model response
+type response struct {
+	User
+	Token string `json:"token"`
+	RefreshToken string `json:"refresh_token"`
+}
 
+// handleLogin godoc
+// @Summary      User Login
+// @Description  Authenticates user and returns JWT access and refresh tokens
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        credentials  body      LoginRequest  true "User email and password"
+// @Success      200          {object}  response
+// @Failure      401          {object}  ErrorResponse "Incorrect email or password"
+// @Failure      500          {object}  ErrorResponse "Internal server error"
+// @Router       /api/login [post]
 func (cfg *apiConfig) handleLogin(w http.ResponseWriter, r *http.Request) {
-	type parameters struct {
-		Password string `json:"password"`
-		Email    string `json:"email"`
-	}
-	type response struct {
-		User
-		Token string `json:"token"`
-		RefreshToken string `json:"refresh_token"`
-	}
-
 	decoder := json.NewDecoder(r.Body)
-	params := parameters{}
+	params := LoginRequest{}
 	err := decoder.Decode(&params)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, "Couldn't decode parameters")

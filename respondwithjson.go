@@ -13,7 +13,8 @@ import (
 
 )
 
-
+// Chirp represents a microblog post (chirp) returned in responses
+// @Description A chirp created by a user
 type Chirp struct {
 	ID        uuid.UUID `json:"id"`
 	CreatedAt time.Time `json:"created_at"`
@@ -36,17 +37,32 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) error
 func respondWithError(w http.ResponseWriter, code int, msg string) error {
 	return respondWithJSON(w, code, map[string]string{"error": msg})
 }
-
+// requestBody represents the JSON request body for creating a chirp
+type requestBody struct {
+	// Body is the text content of the chirp
+	// max length: 140 characters
+	Body string `json:"body"`
+}
+// responseBody represents the JSON response body after creating a chirp
+type responseBody struct {
+	// CleanedBody is the sanitized chirp text with bad words replaced
+	CleanedBody string `json:"cleaned_body"`
+}
+// handleChirps creates a new chirp
+// @Summary      Create a new chirp
+// @Description  Authenticated endpoint to create a chirp with max length 140 characters. Filters bad words.
+// @Tags         chirps
+// @Accept       json
+// @Produce      json
+// @Param        chirp  body requestBody true "Chirp body"
+// @Success      201  {object}  Chirp
+// @Failure      400  {object}  ErrorResponse "Invalid author_id"
+// @Failure      401  {object}  map[string]string  "Unauthorized - missing or invalid JWT"
+// @Failure      500  {object}  map[string]string  "Internal server error - failed to create chirp"
+// @Security     BearerAuth
+// @Router       /api/chirps [post]
 func (cfg *apiConfig) handleChirps(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
-
-	type requestBody struct {
-		Body string `json:"body"`
-	}
-	type responseBody struct {
-		CleanedBody string `json:"cleaned_body"`
-	}
-
 	token, err := auth.GetBearerToken(r.Header)
 	if err != nil {
 		respondWithError(w, http.StatusUnauthorized, "Couldn't find JWT")
@@ -92,7 +108,12 @@ func (cfg *apiConfig) handleChirps(w http.ResponseWriter, r *http.Request) {
 		UserID: chirp.UserID,
 	})
 }
-
+// ErrorResponse represents an error response message
+// swagger:model ErrorResponse
+type ErrorResponse struct {
+    // Error message describing what went wrong
+    Error string `json:"error"`
+}
 func wordreplace(sentence string) string {
 	badWords := []string{"kerfuffle","sharbert","fornax"}
 

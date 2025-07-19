@@ -1,5 +1,6 @@
 package main
 import _ "github.com/lib/pq"
+import _ "github.com/odilmode/http/docs"
 import (
 	"log"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"database/sql"
 	"github.com/joho/godotenv"
 	"github.com/odilmode/http/internal/database"
+	"github.com/swaggo/http-swagger"
 )
 
 
@@ -20,7 +22,19 @@ type apiConfig struct {
 	polkaKey		string
 }
 
+// @title Chirpy API
+// @version 1.0
+// @description Production-style REST API server built with Go.
+// @termsOfService https://github.com/yourusername/chirpy
+// @contact.name Mirodilbek Fazilov
+// @contact.url https://github.com/odilmode
+// @license.name MIT
+// @host localhost:8080
+// @BasePath /
 
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -55,7 +69,7 @@ func main() {
 		jwtSecret:	jwtSecret,
 		polkaKey:	polka,
 	}
-
+	mux.Handle("/swagger/", httpSwagger.WrapHandler)
 	mux.Handle("/app/", apiCfg.middlewareMetricsInc(http.StripPrefix("/app", fs)))
 	mux.HandleFunc("GET /api/healthz", handleReadiness)
 	mux.HandleFunc("GET /admin/metrics", apiCfg.handleMetrics)

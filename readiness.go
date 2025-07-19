@@ -4,7 +4,13 @@ import (
 	"fmt"
 )
 
-
+// handleReadiness godoc
+// @Summary      Readiness check endpoint
+// @Description  Returns "OK" if the server is ready to handle requests
+// @Tags         health
+// @Produce      plain
+// @Success      200  {string}  string  "OK"
+// @Router       /api/healthz [get]
 func handleReadiness(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)

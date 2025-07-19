@@ -7,7 +7,18 @@ import (
 	"net/http"
 	"sort"
 )
-
+// handleGetChirps godoc
+// @Summary      Get Chirps
+// @Description  Retrieve chirps, optionally filtered by author_id and sorted by creation time
+// @Tags         chirps
+// @Accept       json
+// @Produce      json
+// @Param        author_id  query     string  false  "Filter chirps by author UUID"
+// @Param        sort       query     string  false  "Sort order: asc (default) or desc"
+// @Success      200        {array}   Chirp
+// @Failure      400        {object}  ErrorResponse "Invalid author_id"
+// @Failure      500        {object}  ErrorResponse "Failed to fetch chirps or encode response"
+// @Router       /api/chirps [get]
 func (cfg *apiConfig) handleGetChirps(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	s := r.URL.Query().Get("author_id")

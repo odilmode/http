@@ -15,6 +15,19 @@ type RequestBody struct {
 type ResponseBody struct {
 	User
 }
+// handlePutUsers godoc
+// @Summary      Update User Info
+// @Description  Updates authenticated user's email and password
+// @Tags         users
+// @Accept       json
+// @Produce      json
+// @Param        Authorization header string true "Bearer token"
+// @Param        user body RequestBody true "Updated user email and password"
+// @Success      200  {object}  ResponseBody
+// @Failure      400  {object}  ErrorResponse "Invalid request body"
+// @Failure      401  {object}  ErrorResponse "Unauthorized or invalid token"
+// @Failure      500  {object}  ErrorResponse "Internal server error"
+// @Router       /api/users [put]
 func (cfg *apiConfig) handlePutUsers(w http.ResponseWriter, r *http.Request) {
 	accessToken, err :=  auth.GetBearerToken(r.Header)
 	if err != nil {

@@ -23,7 +23,17 @@ type createUserRequest struct {
 	Password string `json:"password"`
 	Email string `json:"email"`
 }
-
+// handleCreateUsers creates a new user in the system.
+// @Summary Create a new user
+// @Description Register a new user with email and password
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user body createUserRequest true "User credentials"
+// @Success 201 {object} User
+// @Failure 400 {object} map[string]string "Bad request"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /api/users [post]
 func (cfg *apiConfig) handleCreateUsers(w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	params := createUserRequest{}
